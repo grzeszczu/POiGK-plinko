@@ -45,11 +45,14 @@ class Ball(pygame.sprite.Sprite):
         # Check to see if ball hits multi
         for multi in multi_group:
             if pygame.sprite.collide_rect(self, multi):
-                settings.BALL_ANIM = False
+                settings.BALLS = settings.BALLS - 1
+                settings.BALANCE = round(settings.BALANCE + settings.BET * multi.multi_amt, 2)
+                settings.balance_log.append(settings.BALANCE + settings.BET * settings.BALLS)
+                print(balance_log)
+                if settings.BALANCE >= BET and settings.enough_balance == False:
+                    settings.enough_balance = True
                 multi.hit_sound()
                 multipliers[str(multi.multi_amt)] += 1
-                print(f"Total plays: {sum([val for val in multipliers.values()])} | {multipliers}")
-                print(multi.multi_amt)
                 multi.animate(multi.color, multi.multi_amt)
                 multi.is_animating = True
 
