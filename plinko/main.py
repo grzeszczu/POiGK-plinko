@@ -1,8 +1,9 @@
 from ball import Ball
 from board import *
 from multis import *
-from settings import *
+import settings
 import ctypes, pygame, pymunk, random, sys
+
 
 ctypes.windll.user32.SetProcessDPIAware()
 
@@ -20,7 +21,6 @@ class Game:
 
         self.ball_group = pygame.sprite.Group()
         self.board = Board(self.space)
-
         self.balls_played = 0
 
     def run(self):
@@ -39,10 +39,27 @@ class Game:
                         self.board.pressing_play = True
                     else:
                         self.board.pressing_play = False
+
                     if self.board.sound_rect.collidepoint(mouse_pos):
                         self.board.pressing_sound = True
                     else:
                         self.board.pressing_sound = False
+
+                    if self.board.lowrisk_rect.collidepoint(mouse_pos):
+                        self.board.pressing_lowrisk = True
+                    else:
+                        self.board.pressing_lowrisk = False
+                    
+                    if self.board.mediumrisk_rect.collidepoint(mouse_pos):
+                        self.board.pressing_mediumrisk = True
+                    else:
+                        self.board.pressing_mediumrisk = False
+
+                    if self.board.highrisk_rect.collidepoint(mouse_pos):
+                        self.board.pressing_highrisk = True
+                    else:
+                        self.board.pressing_highrisk = False                   
+
                 elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.board.pressing_play:
                     mouse_pos = pygame.mouse.get_pos()
                     if self.board.play_rect.collidepoint(mouse_pos):
@@ -50,9 +67,11 @@ class Game:
                         click.play()
                         self.ball = Ball((random_x, 20), self.space, self.board, self.delta_time)
                         self.ball_group.add(self.ball)
+                        settings.BALL_ANIM = True
                         self.board.pressing_play = False
                     else:
                         self.board.pressing_play = False
+
                 elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.board.pressing_sound: 
                     mouse_pos = pygame.mouse.get_pos()
                     if self.board.sound_rect.collidepoint(mouse_pos):
@@ -61,6 +80,99 @@ class Game:
                     else:
                         self.board.pressing_sound = False
 
+                elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.board.pressing_lowrisk:
+                    mouse_pos = pygame.mouse.get_pos()
+                    if self.board.lowrisk_rect.collidepoint(mouse_pos) and settings.BALL_ANIM == False:                       
+                        settings.RISK = 0
+                        for multi in list(multi_group):  # Tworzymy kopię listy, aby móc ją modyfikować w pętli
+                            multi_group.remove(multi)
+                        settings.multi_rgb.clear()
+                        settings.multi_rgb = {
+                            (0, 16): (255, 0, 0),
+                            (1, 9): (255, 30, 0),
+                            (2, 2): (255, 60, 0),
+                            (3, 1.4): (255, 90, 0),
+                            (4, 1.4): (255, 120, 0),
+                            (5, 1.2): (255, 150, 0),
+                            (6, 1.1): (255, 180, 0),
+                            (7, 1): (255, 210, 0),
+                            (8, 0.5): (255, 240, 0),
+                            (9, 1): (255, 210, 0),
+                            (10, 1.1): (255, 180, 0),
+                            (11, 1.2): (255, 150, 0),
+                            (12, 1.4): (255, 120, 0),
+                            (13, 1.4): (255, 90, 0),
+                            (14, 2): (255, 60, 0),
+                            (15, 9): (255, 30, 0),
+                            (16, 16): (255, 0, 0),
+                            }
+                        Board(self.space)
+                        self.board.pressing_lowrisk = False
+                    else:
+                        self.board.pressing_lowrisk = False
+
+                elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.board.pressing_mediumrisk:
+                    mouse_pos = pygame.mouse.get_pos()
+                    if self.board.mediumrisk_rect.collidepoint(mouse_pos) and settings.BALL_ANIM == False:
+                        settings.RISK = 1
+                        for multi in list(multi_group):  # Tworzymy kopię listy, aby móc ją modyfikować w pętli
+                            multi_group.remove(multi)
+                        
+                        settings.multi_rgb.clear()
+                        settings.multi_rgb = {
+                            (0, 110): (255, 0, 0),
+                            (1, 41): (255, 30, 0),
+                            (2, 10): (255, 60, 0),
+                            (3, 5): (255, 90, 0),
+                            (4, 3): (255, 120, 0),
+                            (5, 1.5): (255, 150, 0),
+                            (6, 1): (255, 180, 0),
+                            (7, 0.5): (255, 210, 0),
+                            (8, 0.3): (255, 240, 0),
+                            (9, 0.5): (255, 210, 0),
+                            (10, 1): (255, 180, 0),
+                            (11, 1.5): (255, 150, 0),
+                            (12, 3): (255, 120, 0),
+                            (13, 5): (255, 90, 0),
+                            (14, 10): (255, 60, 0),
+                            (15, 41): (255, 30, 0),
+                            (16, 110): (255, 0, 0),
+                            }
+                        Board(self.space)
+                        self.board.pressing_mediumrisk = False
+                    else:
+                        self.board.pressing_mediumrisk = False
+
+                elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.board.pressing_highrisk:
+                    mouse_pos = pygame.mouse.get_pos()
+                    if self.board.highrisk_rect.collidepoint(mouse_pos) and settings.BALL_ANIM == False:
+                        settings.RISK = 2
+                        for multi in list(multi_group):  # Tworzymy kopię listy, aby móc ją modyfikować w pętli
+                            multi_group.remove(multi)
+                        settings.multi_rgb.clear()
+                        settings.multi_rgb = {
+                            (0, 1000): (255, 0, 0),
+                            (1, 130): (255, 30, 0),
+                            (2, 26): (255, 60, 0),
+                            (3, 9): (255, 90, 0),
+                            (4, 4): (255, 120, 0),
+                            (5, 2): (255, 150, 0),
+                            (6, 0.2): (255, 180, 0),
+                            (7, 0.2): (255, 210, 0),
+                            (8, 0.2): (255, 240, 0),
+                            (9, 0.2): (255, 210, 0),
+                            (10, 0.2): (255, 180, 0),
+                            (11, 2): (255, 150, 0),
+                            (12, 4): (255, 120, 0),
+                            (13, 9): (255, 90, 0),
+                            (14, 26): (255, 60, 0),
+                            (15, 130): (255, 30, 0),
+                            (16, 1000): (255, 0, 0),
+                        }
+                        Board(self.space)
+                        self.board.pressing_highrisk = False
+                    else:
+                        self.board.pressing_highrisk = False
 
             self.screen.fill(BG_COLOR)
 
@@ -91,6 +203,8 @@ class Game:
                 sound05.set_volume(0.6)
                 sound06.set_volume(0.7)
                 sound07.set_volume(0.8)
+
+            
 
             pygame.display.update()
 
