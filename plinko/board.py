@@ -27,6 +27,11 @@ class Board():
         self.scaled_sound_on = pygame.transform.scale(self.sound_on, (self.sound_scaled_width, self.sound_scaled_height))
         self.scaled_sound_off = pygame.transform.scale(self.sound_off, (self.sound_scaled_width, self.sound_scaled_height))
         self.sound_rect = self.scaled_sound_on.get_rect(center=(WIDTH // 40, HEIGHT // 1.04))
+        #chart
+
+        self.chart = pygame.image.load("graphics/chart.png").convert_alpha()
+        self.chart_rect = self.chart.get_rect(center=(1848, 1008))
+        self.pressing_chart = False
 
         #risks
 
@@ -160,3 +165,25 @@ class Board():
             self.display_surface.blit(self.lowrisk_off, (WIDTH // 32, HEIGHT // 4))
             self.display_surface.blit(self.mediumrisk_off, (WIDTH // 32 + 260, HEIGHT // 4))
             self.display_surface.blit(self.highrisk_on, (WIDTH // 32 + 520, HEIGHT // 4))
+
+        #balance
+        self.font = pygame.font.SysFont('Comic Sans MS', 30)
+        self.text_surface = self.font.render(f"Balance: {settings.BALANCE}$" , True, (255, 255, 255))
+        self.display_surface.blit(self.text_surface, (30, 60))
+
+        #bet amount
+        self.text_bet = self.font.render(f"Bet:", True, (255, 255, 255))
+        self.display_surface.blit(self.text_bet, (30, 110))
+    
+        #chart
+        self.display_surface.blit(self.chart, (1800, 960))
+
+        #warning
+        
+        
+        if settings.enough_balance == False:
+            self.text_warning = self.font.render(f"No balance!", True, (255, 0, 0))
+            self.display_surface.blit(self.text_warning, (500, 60))
+    
+        
+
