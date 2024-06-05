@@ -1,6 +1,6 @@
 from multis import *
 from obstacles import *
-from settings import *
+import settings
 import pygame, pymunk
 
 class Board():
@@ -27,6 +27,23 @@ class Board():
         self.scaled_sound_on = pygame.transform.scale(self.sound_on, (self.sound_scaled_width, self.sound_scaled_height))
         self.scaled_sound_off = pygame.transform.scale(self.sound_off, (self.sound_scaled_width, self.sound_scaled_height))
         self.sound_rect = self.scaled_sound_on.get_rect(center=(WIDTH // 40, HEIGHT // 1.04))
+
+        #risks
+
+        self.lowrisk_off = pygame.image.load("graphics/lowriskoff.png").convert_alpha()
+        self.lowrisk_on = pygame.image.load("graphics/lowriskon.png").convert_alpha()
+        self.lowrisk_rect = self.lowrisk_on.get_rect(center=(WIDTH // 32 + 32, HEIGHT // 4 + 32))
+        self.pressing_lowrisk = False
+
+        self.mediumrisk_off = pygame.image.load("graphics/mediumriskoff.png").convert_alpha()
+        self.mediumrisk_on = pygame.image.load("graphics/mediumriskon.png").convert_alpha()
+        self.mediumrisk_rect = self.mediumrisk_on.get_rect(center=(WIDTH // 32 + 292, HEIGHT // 4 + 32))
+        self.pressing_mediumrisk = False
+
+        self.highrisk_on = pygame.image.load("graphics/highriskon.png").convert_alpha()
+        self.highrisk_off = pygame.image.load("graphics/highriskoff.png").convert_alpha()
+        self.highrisk_rect = self.highrisk_on.get_rect(center=(WIDTH // 32 + 552, HEIGHT // 4 + 32))
+        self.pressing_highrisk = False
 
         # Play button
         self.play_up = pygame.image.load("graphics/play01.png").convert_alpha()
@@ -86,8 +103,8 @@ class Board():
         self.display_surface.blit(multi_mask_surface, (right_side_of_board, 0))
 
     def spawn_multis(self):
-        self.multi_amounts = [val[1] for val in multi_rgb.keys()]
-        self.rgb_vals = [val for val in multi_rgb.values()]
+        self.multi_amounts = [val[1] for val in settings.multi_rgb.keys()]
+        self.rgb_vals = [val for val in settings.multi_rgb.values()]
         for i in range(NUM_MULTIS):
             multi = Multi((self.multi_x, self.multi_y), self.rgb_vals[i], self.multi_amounts[i])
             multi_group.add(multi)
@@ -123,7 +140,23 @@ class Board():
             self.display_surface.blit(self.scaled_play_down, (WIDTH // 32, HEIGHT // 3))
         else:
             self.display_surface.blit(self.scaled_play_up, (WIDTH // 32, HEIGHT // 3))
+        
         if self.muted % 2 == 0:
             self.display_surface.blit(self.scaled_sound_on, (WIDTH // 128, HEIGHT // 1.08))
         if self.muted % 2 == 1:
             self.display_surface.blit(self.scaled_sound_off, (WIDTH // 128, HEIGHT // 1.08))
+        
+        if settings.RISK == 0:
+            self.display_surface.blit(self.lowrisk_on, (WIDTH // 32, HEIGHT // 4))
+            self.display_surface.blit(self.mediumrisk_off, (WIDTH // 32 + 260, HEIGHT // 4))
+            self.display_surface.blit(self.highrisk_off, (WIDTH // 32 + 520, HEIGHT // 4))
+
+        if settings.RISK == 1:
+            self.display_surface.blit(self.lowrisk_off, (WIDTH // 32, HEIGHT // 4))
+            self.display_surface.blit(self.mediumrisk_on, (WIDTH // 32 + 260, HEIGHT // 4))
+            self.display_surface.blit(self.highrisk_off, (WIDTH // 32 + 520, HEIGHT // 4))
+
+        if settings.RISK == 2:
+            self.display_surface.blit(self.lowrisk_off, (WIDTH // 32, HEIGHT // 4))
+            self.display_surface.blit(self.mediumrisk_off, (WIDTH // 32 + 260, HEIGHT // 4))
+            self.display_surface.blit(self.highrisk_on, (WIDTH // 32 + 520, HEIGHT // 4))
