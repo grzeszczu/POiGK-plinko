@@ -10,6 +10,8 @@ WIDTH = 1920
 HEIGHT = 1080
 
 BG_COLOR = (16, 32, 45)
+
+
 MULTI_HEIGHT = int(HEIGHT / 19) # 56
 MULTI_COLLISION = HEIGHT - (MULTI_HEIGHT * 2) # 968
 
@@ -22,9 +24,13 @@ OBSTACLE_START = (int((WIDTH / 2) - OBSTACLE_PAD), int((HEIGHT - (HEIGHT * .9)))
 segmentA_2 = OBSTACLE_START
 
 BALL_RAD = 16
-RISK = 0
 
-BALL_ANIM = False
+RISK = 0
+BALANCE = 1000
+BET = 1000
+BALLS = 0
+balance_log = [BALANCE]
+enough_balance = True
 
 multipliers = {
     "1000": 0,
