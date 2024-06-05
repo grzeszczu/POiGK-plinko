@@ -3,6 +3,7 @@ from board import *
 from multis import *
 import settings
 import ctypes, pygame, pymunk, random, sys
+import matplotlib.pyplot as plt
 
 
 ctypes.windll.user32.SetProcessDPIAware()
@@ -58,17 +59,28 @@ class Game:
                     if self.board.highrisk_rect.collidepoint(mouse_pos):
                         self.board.pressing_highrisk = True
                     else:
-                        self.board.pressing_highrisk = False                   
+                        self.board.pressing_highrisk = False
+
+                    if self.board.chart_rect.collidepoint(mouse_pos):
+                        self.board.pressing_chart = True
+                    else:
+                        self.board.pressing_chart = False                     
 
                 elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.board.pressing_play:
                     mouse_pos = pygame.mouse.get_pos()
                     if self.board.play_rect.collidepoint(mouse_pos):
-                        random_x = WIDTH//2 + random.choice([random.randint(-20, -1), random.randint(1, 20)])
-                        click.play()
-                        self.ball = Ball((random_x, 20), self.space, self.board, self.delta_time)
-                        self.ball_group.add(self.ball)
-                        settings.BALL_ANIM = True
-                        self.board.pressing_play = False
+                        if settings.BALANCE - BET >= 0:
+                            settings.enough_balance = True
+                            settings.BALANCE = settings.BALANCE - settings.BET
+                            random_x = WIDTH//2 + random.choice([random.randint(-20, -1), random.randint(1, 20)])
+                            click.play()
+                            self.ball = Ball((random_x, 20), self.space, self.board, self.delta_time)
+                            self.ball_group.add(self.ball)
+                            settings.BALLS = settings.BALLS + 1
+                            self.board.pressing_play = False
+                        else:
+                            settings.enough_balance = False
+                            self.board.pressing_play = False
                     else:
                         self.board.pressing_play = False
 
@@ -82,7 +94,7 @@ class Game:
 
                 elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.board.pressing_lowrisk:
                     mouse_pos = pygame.mouse.get_pos()
-                    if self.board.lowrisk_rect.collidepoint(mouse_pos) and settings.BALL_ANIM == False:                       
+                    if self.board.lowrisk_rect.collidepoint(mouse_pos) and settings.BALLS == 0:                       
                         settings.RISK = 0
                         for multi in list(multi_group):  # Tworzymy kopię listy, aby móc ją modyfikować w pętli
                             multi_group.remove(multi)
@@ -113,7 +125,7 @@ class Game:
 
                 elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.board.pressing_mediumrisk:
                     mouse_pos = pygame.mouse.get_pos()
-                    if self.board.mediumrisk_rect.collidepoint(mouse_pos) and settings.BALL_ANIM == False:
+                    if self.board.mediumrisk_rect.collidepoint(mouse_pos) and settings.BALLS == 0:
                         settings.RISK = 1
                         for multi in list(multi_group):  # Tworzymy kopię listy, aby móc ją modyfikować w pętli
                             multi_group.remove(multi)
@@ -145,7 +157,7 @@ class Game:
 
                 elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.board.pressing_highrisk:
                     mouse_pos = pygame.mouse.get_pos()
-                    if self.board.highrisk_rect.collidepoint(mouse_pos) and settings.BALL_ANIM == False:
+                    if self.board.highrisk_rect.collidepoint(mouse_pos) and settings.BALLS == 0:
                         settings.RISK = 2
                         for multi in list(multi_group):  # Tworzymy kopię listy, aby móc ją modyfikować w pętli
                             multi_group.remove(multi)
@@ -173,7 +185,23 @@ class Game:
                         self.board.pressing_highrisk = False
                     else:
                         self.board.pressing_highrisk = False
-
+                
+                elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.board.pressing_chart: 
+                    mouse_pos = pygame.mouse.get_pos()
+                    if self.board.chart_rect.collidepoint(mouse_pos) and settings.BALLS == 0:
+                        self.indexes = list(range(len(settings.balance_log)))
+                        if settings.balance_log[-1] >= settings.balance_log[0]:
+                            plt.plot(self.indexes, settings.balance_log, color = 'green')
+                        else:
+                            plt.plot(self.indexes, settings.balance_log, color = 'red')
+                        plt.title('Balance chart')
+                        plt.xlabel('Bet #')
+                        plt.ylabel('Balance')
+                        plt.show()
+                        self.board.pressing_chart = False
+                    else:
+                        self.board.pressing_chart = False
+            
             self.screen.fill(BG_COLOR)
 
             self.delta_time = self.clock.tick(FPS) / 1000.0
