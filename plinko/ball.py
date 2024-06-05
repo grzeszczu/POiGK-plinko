@@ -1,6 +1,7 @@
 from multis import *
 from obstacles import *
 from settings import *
+from board import *
 import pygame, pymunk, random
 
 class Ball(pygame.sprite.Sprite):
@@ -44,9 +45,11 @@ class Ball(pygame.sprite.Sprite):
         # Check to see if ball hits multi
         for multi in multi_group:
             if pygame.sprite.collide_rect(self, multi):
+                settings.BALL_ANIM = False
                 multi.hit_sound()
                 multipliers[str(multi.multi_amt)] += 1
                 print(f"Total plays: {sum([val for val in multipliers.values()])} | {multipliers}")
+                print(multi.multi_amt)
                 multi.animate(multi.color, multi.multi_amt)
                 multi.is_animating = True
 
