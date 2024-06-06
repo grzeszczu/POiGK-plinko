@@ -1,6 +1,7 @@
 from ball import Ball
 from board import *
 from multis import *
+import time
 import settings
 import ctypes, pygame, pymunk, random, sys
 import matplotlib.pyplot as plt
@@ -25,14 +26,52 @@ class Game:
         self.balls_played = 0
 
     def run(self):
-
+        self.start = time.time()
         self.start_time = pygame.time.get_ticks()
-
         while True:
+            self.now = time.time()
+            if self.now - self.start >= 7:
+                settings.BALLS = 0
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+                elif event.type == pygame.KEYDOWN and settings.BALLS == 0:
+                    if settings.ACTIVE == True:
+                        if event.key == pygame.K_BACKSPACE:
+                           settings.BET_TEXT = settings.BET_TEXT[:-1]
+                        else:
+                            if event.unicode.isdigit() or event.unicode == '.':
+                                if event.unicode == '.' and '.' in settings.BET_TEXT:
+                                    continue
+                                if float(settings.BET_TEXT + event.unicode) <= settings.BALANCE: 
+                                    settings.BET_TEXT += event.unicode
+                                    settings.BET = float(settings.BET_TEXT)
+                
+                if event.type == pygame.KEYDOWN:
+                    if settings.ACTIVE_AUTO == True:
+                        if event.key == pygame.K_BACKSPACE:
+                           settings.AUTO_TEXT = settings.AUTO_TEXT[:-1]
+                        else:
+                            if event.unicode.isdigit():
+                                settings.AUTO_TEXT += event.unicode
+                                settings.AUTO = int(settings.AUTO_TEXT)
+                        if event.key == pygame.K_RETURN:
+                            settings.AUTO = int(settings.AUTO_TEXT)
+                            if settings.AUTO * settings.BET <= settings.BALANCE:
+                                self.start = self.now
+                                settings.enough_balance = True
+                                self.drop = settings.AUTO
+                                settings.BALLS = settings.BALLS + settings.AUTO
+                                for i in range (self.drop):
+                                    settings.BALANCE = round(settings.BALANCE - settings.BET, 2)
+                                    random_x = WIDTH//2 + random.choice([random.randint(-20, -1), random.randint(1, 20)])
+                                    click.play()
+                                    self.ball = Ball((random_x, 20), self.space, self.board, self.delta_time)
+                                    self.ball_group.add(self.ball)
+                            else:
+                                settings.enough_balance = False
+
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = pygame.mouse.get_pos()
 
@@ -64,14 +103,36 @@ class Game:
                     if self.board.chart_rect.collidepoint(mouse_pos):
                         self.board.pressing_chart = True
                     else:
-                        self.board.pressing_chart = False                     
+                        self.board.pressing_chart = False
+
+                    if self.board.reset_rect.collidepoint(mouse_pos):
+                        self.board.pressing_reset = True
+                    else:
+                        self.board.pressing_reset = False
+
+                    if self.board.bet_rect.collidepoint(mouse_pos):
+                        self.board.pressing_bet = True
+                    else:
+                        self.board.pressing_bet = False
+             
+                    if self.board.bet_rect.collidepoint(mouse_pos):
+                        settings.ACTIVE = True
+                    else:
+                        settings.ACTIVE = False
+
+                    if self.board.auto_rect.collidepoint(mouse_pos):
+                        settings.ACTIVE_AUTO = True
+                    else:
+                        settings.ACTIVE_AUTO = False              
 
                 elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.board.pressing_play:
                     mouse_pos = pygame.mouse.get_pos()
                     if self.board.play_rect.collidepoint(mouse_pos):
-                        if settings.BALANCE - BET >= 0:
+                        self.start = self.now
+                        settings.BET = float(settings.BET_TEXT)
+                        if settings.BALANCE - settings.BET >= 0:
                             settings.enough_balance = True
-                            settings.BALANCE = settings.BALANCE - settings.BET
+                            settings.BALANCE = round(settings.BALANCE - settings.BET, 2)
                             random_x = WIDTH//2 + random.choice([random.randint(-20, -1), random.randint(1, 20)])
                             click.play()
                             self.ball = Ball((random_x, 20), self.space, self.board, self.delta_time)
@@ -91,6 +152,15 @@ class Game:
                         self.board.pressing_sound = False
                     else:
                         self.board.pressing_sound = False
+
+                elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.board.pressing_reset: 
+                    mouse_pos = pygame.mouse.get_pos()
+                    if self.board.reset_rect.collidepoint(mouse_pos):
+                        settings.balance_log.clear()
+                        settings.balance_log = [settings.BALANCE]
+                        self.board.pressing_reset = False
+                    else:
+                        self.board.pressing_reset = False
 
                 elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.board.pressing_lowrisk:
                     mouse_pos = pygame.mouse.get_pos()
@@ -232,8 +302,16 @@ class Game:
                 sound06.set_volume(0.7)
                 sound07.set_volume(0.8)
 
-            
+            if settings.ACTIVE == True:
+                settings.COLOR = settings.GREEN
+            else:
+                settings.COLOR = settings.WHITE
 
+            if settings.ACTIVE_AUTO == True:
+                settings.COLOR_AUTO = settings.GREEN
+            else:
+                settings.COLOR_AUTO = settings.LIGHT_BLUE                     
+                
             pygame.display.update()
 
 if __name__ == '__main__':
