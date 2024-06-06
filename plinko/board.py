@@ -33,6 +33,12 @@ class Board():
         self.chart_rect = self.chart.get_rect(center=(1848, 1008))
         self.pressing_chart = False
 
+        #reset
+        self.reset = pygame.image.load("graphics/reset.png").convert_alpha()
+        self.reset_rect = self.chart.get_rect(center=(1752, 998))
+        self.pressing_reset = False
+
+
         #risks
 
         self.lowrisk_off = pygame.image.load("graphics/lowriskoff.png").convert_alpha()
@@ -172,9 +178,26 @@ class Board():
         self.display_surface.blit(self.text_surface, (30, 60))
 
         #bet amount
-        self.text_bet = self.font.render(f"Bet:", True, (255, 255, 255))
+        self.pressing_bet = False
+        self.bet_amount = self.font.render(settings.BET_TEXT, True, settings.COLOR)
+        self.bet_rect = pygame.Rect(30, 100, 100, 50)
+        self.text_bet = self.font.render(f"BET:", True, settings.COLOR)
         self.display_surface.blit(self.text_bet, (30, 110))
-    
+        self.display_surface.blit(self.bet_amount, (100, 110))
+        
+        #auto
+        self.pressing_auto = False
+        self.auto_amount = self.font.render(settings.AUTO_TEXT, True, settings.COLOR_AUTO)
+        self.auto_rect = pygame.Rect(30, 150, 100, 50)
+        self.text_auto = self.font.render(f"AUTO", True, settings.COLOR_AUTO)
+
+
+        self.display_surface.blit(self.text_auto, (30, 150))
+        if settings.ACTIVE_AUTO == True:
+            self.display_surface.blit(self.font.render(f":", True, settings.COLOR_AUTO), (120, 150))
+            self.display_surface.blit(self.auto_amount, (130, 150))
+
+
         #chart
         self.display_surface.blit(self.chart, (1800, 960))
 
@@ -184,6 +207,10 @@ class Board():
         if settings.enough_balance == False:
             self.text_warning = self.font.render(f"No balance!", True, (255, 0, 0))
             self.display_surface.blit(self.text_warning, (500, 60))
+
+        #reset stats
+
+        self.display_surface.blit(self.reset, (1704, 970))
     
         
 
