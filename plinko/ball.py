@@ -48,7 +48,6 @@ class Ball(pygame.sprite.Sprite):
                 settings.BALLS = settings.BALLS - 1
                 settings.BALANCE = round(settings.BALANCE + settings.BET * multi.multi_amt, 2)
                 settings.balance_log.append(settings.BALANCE + settings.BET * settings.BALLS)
-                print(balance_log)
                 if settings.BALANCE >= BET and settings.enough_balance == False:
                     settings.enough_balance = True
                 multi.hit_sound()
