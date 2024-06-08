@@ -8,9 +8,14 @@ ctypes.windll.user32.SetProcessDPIAware()
 
 WIDTH = 1920
 HEIGHT = 1080
+WIDTH_START = 800
+HEIGHT_START = 600
+GAME = False
+USERNAME = ''
 
 BG_COLOR = (16, 32, 45)
 
+BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 WHITE = (255, 255, 255)
 LIGHT_BLUE = (173, 216, 230)
