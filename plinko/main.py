@@ -5,6 +5,8 @@ import time
 import settings
 import ctypes, pygame, pymunk, random, sys
 import matplotlib.pyplot as plt
+import os
+import json
 
 
 ctypes.windll.user32.SetProcessDPIAware()
@@ -25,6 +27,14 @@ class Game:
         self.board = Board(self.space)
         self.balls_played = 0
 
+    def update_user_data(username, new_balance):
+        username_str = str(username)
+        with open('users.json', 'r+') as file:
+            data = json.load(file)
+            data[username_str]['balance'] = new_balance
+            file.seek(0)
+            json.dump(data, file, indent=4)
+
     def run(self):
         self.start = time.time()
         self.start_time = pygame.time.get_ticks()
@@ -34,6 +44,8 @@ class Game:
                 settings.BALLS = 0
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    self.username = settings.USERNAME
+                    Game.update_user_data(settings.USERNAME, settings.BALANCE)
                     pygame.quit()
                     sys.exit()
                 elif event.type == pygame.KEYDOWN and settings.BALLS == 0:
@@ -114,6 +126,11 @@ class Game:
                         self.board.pressing_bet = True
                     else:
                         self.board.pressing_bet = False
+
+                    if self.board.exit_rect.collidepoint(mouse_pos):
+                        self.board.pressing_exit = True
+                    else:
+                        self.board.pressing_exit = False
              
                     if self.board.bet_rect.collidepoint(mouse_pos):
                         settings.ACTIVE = True
@@ -161,6 +178,17 @@ class Game:
                         self.board.pressing_reset = False
                     else:
                         self.board.pressing_reset = False
+                
+                elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.board.pressing_exit: 
+                    mouse_pos = pygame.mouse.get_pos()
+                    if self.board.exit_rect.collidepoint(mouse_pos):
+                        pygame.quit()
+                        self.username = settings.USERNAME
+                        Game.update_user_data(settings.USERNAME, settings.BALANCE)
+                        os.system("python start.py")
+                        self.board.pressing_exit = False
+                    else:
+                        self.board.pressing_exit = False
 
                 elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.board.pressing_lowrisk:
                     mouse_pos = pygame.mouse.get_pos()
@@ -315,5 +343,7 @@ class Game:
             pygame.display.update()
 
 if __name__ == '__main__':
-    game = Game()
-    game.run()
+            game = Game()
+            game.run()
+
+    
