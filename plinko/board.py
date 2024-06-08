@@ -38,6 +38,11 @@ class Board():
         self.reset_rect = self.chart.get_rect(center=(1752, 998))
         self.pressing_reset = False
 
+        #exit
+        self.exit = pygame.image.load("graphics/exit.png").convert_alpha()
+        self.exit_rect = self.chart.get_rect(center=(1872, 48))
+        self.pressing_exit = False
+
 
         #risks
 
@@ -197,6 +202,9 @@ class Board():
             self.display_surface.blit(self.font.render(f":", True, settings.COLOR_AUTO), (120, 150))
             self.display_surface.blit(self.auto_amount, (130, 150))
 
+        #welcome
+        self.display_surface.blit(self.font.render(f"Welcome,", True, settings.WHITE), (30, 10))
+        self.display_surface.blit(self.font.render(settings.USERNAME, True, settings.WHITE), (170, 10))
 
         #chart
         self.display_surface.blit(self.chart, (1800, 960))
@@ -211,6 +219,10 @@ class Board():
         #reset stats
 
         self.display_surface.blit(self.reset, (1704, 970))
+
+        #exit
+
+        self.display_surface.blit(self.exit, (1824, 0))
     
         
 
