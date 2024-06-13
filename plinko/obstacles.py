@@ -23,14 +23,12 @@ class AnimatedObstacle(pygame.sprite.Sprite):
         self.delta_time = delta_time
         self.rect = pygame.Rect(x - radius, y - radius, radius * 2, radius * 2)
 
-        # Calculate alpha value to decrement each frame
         self.alpha = 125
         self.fade_speed_second = 250
         self.fade_speed_frame = self.fade_speed_second * self.delta_time
         self.divisor = int(self.fade_speed_second / self.fade_speed_frame)
         self.fade_speed_frame = self.alpha / self.divisor
 
-        # Calculate radius value to decrement each frame
         self.radius_dec_second = 32
         self.radius_dec_frame = self.radius_dec_second * self.delta_time
         self.divisor_rad = int(self.radius_dec_second / self.radius_dec_frame)
