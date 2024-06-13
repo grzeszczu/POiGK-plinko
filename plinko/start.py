@@ -5,37 +5,30 @@ import json
 from PIL import Image
 import settings
 from main import Game
-# Inicjalizacja Pygame
+
 pygame.init()
 
-# Kolory
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
-# Plik JSON z danymi użytkowników
 USER_DATA_FILE = 'users.json'
 
-# Funkcja do ładowania danych użytkowników
 def load_user_data():
     if not os.path.exists(USER_DATA_FILE):
-        # Utwórz plik z pustym słownikiem, jeśli nie istnieje
         with open(USER_DATA_FILE, 'w') as file:
             json.dump({}, file)
     try:
         with open(USER_DATA_FILE, 'r') as file:
             return json.load(file)
     except json.JSONDecodeError:
-        # Jeśli plik jest pusty lub uszkodzony, zwróć pusty słownik
         return {}
 
-# Funkcja do zapisywania danych użytkowników
 def save_user_data(data):
     with open(USER_DATA_FILE, 'w') as file:
         json.dump(data, file, indent=4)
 
 user_data = load_user_data()
 
-# Funkcja do tworzenia konta użytkownika
 def create_account(username, password):
     if username in user_data:
         return False, "User already exists."
@@ -43,7 +36,6 @@ def create_account(username, password):
     save_user_data(user_data)
     return True, "Signed up."
 
-# Funkcja do logowania użytkownika
 def login(username, password):
     if username not in user_data:
         return False, "User not found."
@@ -51,13 +43,12 @@ def login(username, password):
         return False, "Invalid password."
     return True, "Logged in successfully."
 
-# Funkcja do rysowania tekstu na ekranie
 def draw_text(screen, text, pos, font):
     screen_text = font.render(text, True, WHITE)
     text_rect = screen_text.get_rect(topleft=(pos[0], pos[1] + 200))
     screen.blit(screen_text, text_rect)
 
-class GifViewer:
+class Start:
     def __init__(self, gif_path):
         pygame.init()
         self.screen = pygame.display.set_mode((settings.WIDTH_START, settings.HEIGHT_START))
@@ -67,7 +58,7 @@ class GifViewer:
         self.frames = self.load_gif_frames(gif_path)
         self.current_frame = 0
         self.frame_count = len(self.frames)
-        self.frame_delay = 100  # milliseconds between frames
+        self.frame_delay = 100  # ms between frames
         self.last_update_time = pygame.time.get_ticks()
 
         self.font = pygame.font.Font(None, 36)
@@ -86,7 +77,7 @@ class GifViewer:
 
                 surface = pygame.image.fromstring(data, size, mode)
                 frames.append(surface)
-                image.seek(len(frames))  # Move to the next frame
+                image.seek(len(frames)) #next frame (gif)
         except EOFError:
             pass
         return frames
@@ -106,7 +97,7 @@ class GifViewer:
             draw_text(self.screen, "Username:", (200, 150), self.font)
             draw_text(self.screen, "Password:", (200, 200), self.font)
 
-            # Oblicz szerokość tekstu wprowadzanego i dostosuj szerokość prostokąta wprowadzania tekstu
+            #making windows bigger if text is too long
             username_width = self.font.size(username)[0]
             password_width = self.font.size('*' * len(password))[0]
             username_rect = pygame.Rect(350, 345, max(200, username_width + 10), 40)
@@ -175,7 +166,7 @@ class GifViewer:
             draw_text(self.screen, "Username:", (200, 150), self.font)
             draw_text(self.screen, "Password:", (200, 200), self.font)
 
-            # Oblicz szerokość tekstu wprowadzanego i dostosuj szerokość prostokąta wprowadzania tekstu
+            #making windows bigger if text is too long
             username_width = self.font.size(username)[0]
             password_width = self.font.size('*' * len(password))[0]
             username_rect = pygame.Rect(350, 345, max(200, username_width + 10), 40)
@@ -279,6 +270,6 @@ class GifViewer:
 
 
 if __name__ == '__main__':
-    gif_path = "graphics/logo.gif"  # Zmień na ścieżkę do twojego pliku GIF
-    viewer = GifViewer(gif_path)
+    gif_path = "graphics/logo.gif"
+    viewer = Start(gif_path)
     viewer.run()
