@@ -27,10 +27,9 @@ class Ball(pygame.sprite.Sprite):
         self.rect.centerx = pos_x
         self.rect.centery = pos_y
 
-        # Check to see if ball hits obstacle
+        #check to see if ball hits obstacle
         for obstacle in self.board.obstacle_sprites:
             if pygame.sprite.collide_rect(self, obstacle):
-                # Create animation and add to animation_group
                 obstacle_centerx, obstacle_centery = obstacle.rect.centerx, obstacle.rect.centery
                 obstacle_pos = (obstacle_centerx, obstacle_centery)
 
@@ -38,11 +37,10 @@ class Ball(pygame.sprite.Sprite):
                     if obstacle_pos == animating_obstacle.coords:
                         animating_obstacle.kill()
 
-                # Instantiate obstacle animation: params -> x, y, radius, color, delta_time
                 obs_anim = AnimatedObstacle(obstacle_centerx, obstacle_centery, 16, (255, 255, 255), self.delta_time)
                 animation_group.add(obs_anim)
 
-        # Check to see if ball hits multi
+        #check to see if ball hits multi
         for multi in multi_group:
             if pygame.sprite.collide_rect(self, multi):
                 settings.BALLS = settings.BALLS - 1
@@ -55,11 +53,11 @@ class Ball(pygame.sprite.Sprite):
                 multi.animate(multi.color, multi.multi_amt)
                 multi.is_animating = True
 
-                # Display previous multi on right side of screen
+                #display previous multi on right side of screen
                 prev_rgb = multi.color
                 prev_multi = PrevMulti(str(multi.multi_amt), prev_rgb)
                 prev_multi_group.add(prev_multi)
                 self.kill()
         
-        # Draw red ball
+        #draw red ball
         pygame.draw.circle(self.display_surface, (255, 0, 0), (pos_x, pos_y), BALL_RAD)
