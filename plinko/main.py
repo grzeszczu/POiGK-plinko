@@ -194,7 +194,7 @@ class Game:
                     mouse_pos = pygame.mouse.get_pos()
                     if self.board.lowrisk_rect.collidepoint(mouse_pos) and settings.BALLS == 0:                       
                         settings.RISK = 0
-                        for multi in list(multi_group):  # Tworzymy kopię listy, aby móc ją modyfikować w pętli
+                        for multi in list(multi_group):
                             multi_group.remove(multi)
                         settings.multi_rgb.clear()
                         settings.multi_rgb = {
@@ -225,7 +225,7 @@ class Game:
                     mouse_pos = pygame.mouse.get_pos()
                     if self.board.mediumrisk_rect.collidepoint(mouse_pos) and settings.BALLS == 0:
                         settings.RISK = 1
-                        for multi in list(multi_group):  # Tworzymy kopię listy, aby móc ją modyfikować w pętli
+                        for multi in list(multi_group):
                             multi_group.remove(multi)
                         
                         settings.multi_rgb.clear()
@@ -257,7 +257,7 @@ class Game:
                     mouse_pos = pygame.mouse.get_pos()
                     if self.board.highrisk_rect.collidepoint(mouse_pos) and settings.BALLS == 0:
                         settings.RISK = 2
-                        for multi in list(multi_group):  # Tworzymy kopię listy, aby móc ją modyfikować w pętli
+                        for multi in list(multi_group):
                             multi_group.remove(multi)
                         settings.multi_rgb.clear()
                         settings.multi_rgb = {
