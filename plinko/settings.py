@@ -72,7 +72,7 @@ multipliers = {
     "0.2": 0
     }
 
-    # RGB Values for multipliers
+    #rgb for multis
 multi_rgb = {
     (0, 16): (255, 0, 0),
     (1, 9): (255, 30, 0),
