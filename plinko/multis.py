@@ -1,6 +1,6 @@
 import settings
 import pygame
-# Sprite for multipliers beneath obstacles
+
 multi_group = pygame.sprite.Group()
 clock = pygame.time.Clock()
 delta_time = clock.tick(settings.FPS) / 1000.0
@@ -20,12 +20,12 @@ class Multi(pygame.sprite.Sprite):
         self.multi_amt = multi_amt
         self.prev_multi = int(settings.WIDTH / 21.3)
 
-        # Animation stuff; framerate independent
+        #animation frame independent
         self.animated_frames = 0
         self.animation_frames = int(0.25 / delta_time)
         self.is_animating = False
 
-        # Draw multiplier amount on rectangle
+        #draw multi amount on rectangle
         self.render_multi()
 
 
@@ -43,7 +43,7 @@ class Multi(pygame.sprite.Sprite):
         text_surface = self.font.render(f"{self.multi_amt}x", True, (0, 0, 0))
         text_rect = text_surface.get_rect(center=self.image.get_rect().center)
         self.image.blit(text_surface, text_rect)
-
+    #sounds dependent on risks
     def hit_sound(self):
         if settings.RISK == 0:
             if str(self.multi_amt) == "0.5" or str(self.multi_amt) == "1":
@@ -98,13 +98,12 @@ class Multi(pygame.sprite.Sprite):
         if self.is_animating:
             self.animate(self.color, self.multi_amt)
 
-# Class for previous multiplier display on right side of screen
+#multi display on right side
 class PrevMulti(pygame.sprite.Sprite):
     def __init__(self, multi_amt, rgb_tuple):
         super().__init__()
         self.display_surface = pygame.display.get_surface()
 
-        # Rectangle stuff
         self.multi_amt = multi_amt
         self.font = pygame.font.SysFont(None, 36)
         self.rect_width = settings.SCORE_RECT
@@ -114,7 +113,7 @@ class PrevMulti(pygame.sprite.Sprite):
         pygame.draw.rect(self.prev_surf, self.rgb, (0, 0, self.rect_width, self.rect_height))
         self.prev_rect = self.prev_surf.get_rect(midbottom=(int(settings.WIDTH * .85), (settings.HEIGHT / 2) - (settings.SCORE_RECT * 2)))
 
-        # Animation
+        # animation
         self.y_traverse = 0
         self.traveled = 0
 
@@ -126,14 +125,14 @@ class PrevMulti(pygame.sprite.Sprite):
         self.prev_surf.blit(text_surface, text_rect)
 
     def update(self):
-        if self.prev_rect.bottom > (settings.HEIGHT - (settings.SCORE_RECT * 2)): # 864 at 1080
+        if self.prev_rect.bottom > (settings.HEIGHT - (settings.SCORE_RECT * 2)): # 864
             self.kill()
 
         else:
             if self.traveled < self.y_traverse:
                 total_distance = settings.SCORE_RECT
                 distance_per_second = 1800
-                distance_per_frame = distance_per_second * delta_time # 28 at dt = .016
+                distance_per_frame = distance_per_second * delta_time # 28
                 divisor = int(settings.SCORE_RECT / distance_per_frame)
                 distance_per_frame = settings.SCORE_RECT / divisor
                 self.prev_rect.bottom += int(distance_per_frame)
@@ -148,7 +147,7 @@ class PrevMultiGroup(pygame.sprite.Group):
     def update(self):
         super().update()
 
-        # Maintain four previous multis at a maximum; animate
+        #maintaining previous multis
         if len(self) > 5:
             self.remove(self.sprites().pop(0))        
         if len(self) == 1:
